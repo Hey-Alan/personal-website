@@ -1,30 +1,19 @@
 {
   "profile": {
     "name": "徐亚伦",
-    "tagline": "写小说 · 写代码 · 做游戏",
+    "tagline": "我连崩溃都要挑时间，怕耽误了明天的搬砖",
     "avatar": "",
     "bio": [
-      "你好，欢迎来到我的个人网站！我平时喜欢写小说、写程序，偶尔也做一些小游戏。",
-      "这里是我的自留地：书架上放着我写的小说，程序区是我做过的小工具，游戏区有一个现在就能玩的小游戏。",
-      "这两段介绍是占位用的，请在 js/data.js 里改成你自己的话。"
+      "（暂无介绍）"
     ],
     "skills": [
-      "写小说",
-      "Python",
-      "JavaScript",
-      "游戏开发",
-      "瞎折腾"
+      "写作"
     ],
     "contacts": [
       {
         "label": "邮箱",
-        "value": "you@example.com",
-        "href": "mailto:you@example.com"
-      },
-      {
-        "label": "GitHub",
-        "value": "github.com/yourname",
-        "href": "https://github.com/yourname"
+        "value": "xyl390043933@163.com",
+        "href": ""
       }
     ]
   },
