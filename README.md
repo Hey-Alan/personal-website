@@ -1,5 +1,8 @@
 # 我的个人网站
 
+> 🌐 线上地址：**https://hey-alan.github.io/personal-website/**
+> 源码仓库：https://github.com/Hey-Alan/personal-website （本地改完内容后叫 ZCode 帮你推送即可更新线上）
+
 一个**纯静态**的个人网站，包含四个板块：**简介、小说书架、程序作品、小游戏**。
 不需要服务器和数据库，双击 `index.html` 就能在本地浏览，也能免费发布到网上（见文末）。
 
