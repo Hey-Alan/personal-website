@@ -13,7 +13,7 @@
     });
   };
 
-  var data = window.SITE_DATA;
+  var data = null;
   var page = document.body.dataset.page;
 
   /* ---------- 公共部分：logo / 标题 / 导航高亮 / 页脚 ---------- */
@@ -212,11 +212,20 @@
     });
   }
 
-  /* ---------- 启动 ---------- */
-  renderCommon();
-  if (page === "home") renderHome();
-  else if (page === "novels") renderNovels();
-  else if (page === "novel") renderNovelPage();
-  else if (page === "programs") renderPrograms();
-  else if (page === "games") renderGames();
+  /* ---------- 启动：优先读取线上内容 content.json，失败则回退 data.js ---------- */
+  function boot(d) {
+    data = d;
+    if (!data) return;
+    renderCommon();
+    if (page === "home") renderHome();
+    else if (page === "novels") renderNovels();
+    else if (page === "novel") renderNovelPage();
+    else if (page === "programs") renderPrograms();
+    else if (page === "games") renderGames();
+  }
+
+  fetch("content/content.json?t=" + Date.now(), { cache: "no-store" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (j) { boot(j && j.profile ? j : window.SITE_DATA); })
+    .catch(function () { boot(window.SITE_DATA); });
 })();

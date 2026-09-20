@@ -29,7 +29,27 @@ personal-website/
 
 直接双击 `index.html` 用浏览器打开即可，无需安装任何东西。
 
-## 怎么改内容（全部在 `js/data.js`）
+## 网页管理面板（在线编辑，推荐）
+
+不想手动改文件的话，直接在**线上网址**操作：
+
+1. 页面**右下角有一个 ⚙ 按钮**，点击后输入**管理密码**（初始密码：`heyalan2026`，进去后请立刻在"设置"页改掉）
+2. 首次使用需在"**设置**"页粘贴一个 GitHub 令牌（一次性操作，令牌只保存在你自己浏览器里）：
+   - 打开 https://github.com/settings/personal-access-tokens/new
+   - Repository access 选 *Only select repositories* → 选中 `Hey-Alan/personal-website`
+   - Permissions → Repository permissions → **Contents → Read and write**（其他权限都不用给）
+   - 生成后粘贴进设置页，点"保存并验证"
+3. 之后就能在面板里：
+   - **上传小说**：选 .txt 文件或直接粘贴正文，自动识别"第一章"式章节标题（支持 UTF-8 / GBK 编码）
+   - **上传程序**：zip / exe / py 等任意文件（建议单个 < 20 MB），或只填一个外部链接
+   - **上传游戏**：.html 网页游戏会自动变成"在线试玩"，其他格式变成下载
+   - **基本信息**：改名字、签名、自我介绍、技能标签、联系方式
+   - **删除条目**：各列表里的删除按钮（对应上传文件也会从仓库删除）
+4. 每次发布后 **约 1 分钟**线上生效（GitHub Pages 需要重新构建），刷新页面即可看到
+
+原理：面板通过 GitHub API 直接把内容写进仓库的 `content/content.json` 和 `assets/`，网站打开时优先读取这个文件。
+
+## 手动改文件（备用方式）
 
 用记事本或任意编辑器打开 `js/data.js`，照着里面的示例和注释改就行。
 
