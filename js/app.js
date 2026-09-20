@@ -16,6 +16,12 @@
   var data = null;
   var page = document.body.dataset.page;
 
+  /* 绑定自定义域名后：旧 github.io 地址整体跳转到新域名（避免 https→http 资源加载被拦截） */
+  if (location.hostname === "hey-alan.github.io") {
+    location.replace("http://hey-alan.com.cn" + location.pathname.replace(/^\/personal-website/, "") + location.search + location.hash);
+    return;
+  }
+
   /* ---------- 公共部分：logo / 标题 / 导航高亮 / 页脚 ---------- */
   function renderCommon() {
     var p = data.profile;
