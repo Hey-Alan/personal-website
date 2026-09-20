@@ -246,7 +246,7 @@
         $("#adm-pass").value = "";
       }
     } catch (e) {
-      toast("无法读取管理配置，请确认在线");
+      toast("无法读取管理配置：请检查地址栏是否为 hey-alan.com.cn（当前是 " + location.hostname + "），按 Ctrl+F5 强制刷新后重试");
     }
   }
 
