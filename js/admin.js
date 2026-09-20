@@ -253,7 +253,10 @@
   function openPanel() {
     $("#adm-root").hidden = false;
     document.body.style.overflow = "hidden";
-    renderTab($(".adm-tab.active").dataset.tab);
+    $$("#adm-tabs .adm-tab").forEach((x) => x.classList.remove("active"));
+    const first = $("#adm-tabs .adm-tab");
+    if (first) first.classList.add("active");
+    renderTab("novel");
     checkToken();
   }
   function closePanel() {
