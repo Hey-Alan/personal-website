@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="我写的小说">
+<title>书架 · 你的名字</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="novels">
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" id="logo">你的名字</a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label for="nav-toggle" class="nav-burger" aria-label="菜单">☰</label>
+    <nav class="nav">
+      <a href="index.html" data-nav="home">首页</a>
+      <a href="novels.html" data-nav="novels">小说</a>
+      <a href="programs.html" data-nav="programs">程序</a>
+      <a href="games.html" data-nav="games">游戏</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="page-banner">
+    <h1>📚 书架</h1>
+    <p id="novel-count"></p>
+  </section>
+  <div class="card-grid" id="novel-grid"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="container"><p id="footer-text">© 2026 你的名字</p></div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

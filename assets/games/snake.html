@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>贪吃蛇</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #f7f5f0; color: #2b2b2b;
+    display: flex; justify-content: center;
+    padding: 18px 12px 30px; min-height: 100vh;
+  }
+  #wrap { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  h1 { font-size: 1.4rem; }
+  #hud { display: flex; gap: 26px; color: #6f6a61; }
+  #hud b { color: #3d6b8e; font-size: 1.1rem; }
+  canvas {
+    width: 100%; aspect-ratio: 1 / 1; display: block;
+    border-radius: 14px; border: 1px solid #e5dfd4;
+    box-shadow: 0 2px 12px rgba(43, 43, 43, .08); background: #fff;
+  }
+  #msg { color: #6f6a61; font-size: .95rem; min-height: 1.5em; text-align: center; }
+  #pad { display: flex; flex-direction: column; align-items: center; gap: 8px; user-select: none; }
+  #pad div { display: flex; gap: 8px; }
+  #pad button {
+    width: 58px; height: 46px; font-size: 1.1rem;
+    border: 1px solid #e5dfd4; border-radius: 10px;
+    background: #fff; color: #2b2b2b; cursor: pointer;
+  }
+  #pad button:active { background: #e8eff5; }
+  /* 有鼠标的电脑隐藏屏幕方向键，触屏设备显示 */
+  @media (hover: hover) and (pointer: fine) { #pad { display: none; } }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <h1>🐍 贪吃蛇</h1>
+  <div id="hud"><span>得分 <b id="score">0</b></span><span>最高 <b id="best">0</b></span></div>
+  <canvas id="cv" width="400" height="400"></canvas>
+  <p id="msg">按 方向键 / WASD 开始，空格暂停</p>
+  <div id="pad">
+    <button data-d="up">▲</button>
+    <div>
+      <button data-d="left">◀</button>
+      <button data-d="down">▼</button>
+      <button data-d="right">▶</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var cv = document.getElementById("cv");
+  var ctx = cv.getContext("2d");
+  var N = 20, CELL = cv.width / N;
+  var snake, dir, nextDir, food, score, speed;
+  var timer = null, dead = false, started = false;
+  var best = +(localStorage.getItem("snake-best") || 0);
+
+  function $(id) { return document.getElementById(id); }
+  function setMsg(t) { $("msg").textContent = t; }
+  function updateHud() { $("score").textContent = score; $("best").textContent = best; }
+
+  function reset() {
+    snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+    dir = { x: 1, y: 0 };
+    nextDir = dir;
+    score = 0; speed = 150; dead = false; started = false;
+    placeFood();
+    updateHud();
+    if (timer) { clearInterval(timer); timer = null; }
+    setMsg("按 方向键 / WASD 开始，空格暂停");
+    draw();
+  }
+
+  function placeFood() {
+    do {
+      food = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N) };
+    } while (snake.some(function (s) { return s.x === food.x && s.y === food.y; }));
+  }
+
+  function start() {
+    if (timer) return;
+    started = true;
+    timer = setInterval(tick, speed);
+    setMsg("空格暂停");
+  }
+
+  function tick() {
+    dir = nextDir;
+    var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    var hitWall = head.x < 0 || head.y < 0 || head.x >= N || head.y >= N;
+    var hitSelf = snake.some(function (s) { return s.x === head.x && s.y === head.y; });
+    if (hitWall || hitSelf) { gameOver(); return; }
+
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) {
+      score++;
+      if (score > best) { best = score; localStorage.setItem("snake-best", String(best)); }
+      placeFood();
+      updateHud();
+      if (score % 5 === 0 && speed > 70) {  // 每 5 分加速一档
+        speed -= 10;
+        clearInterval(timer);
+        timer = setInterval(tick, speed);
+      }
+    } else {
+      snake.pop();
+    }
+    draw();
+  }
+
+  function gameOver() {
+    dead = true;
+    clearInterval(timer); timer = null;
+    setMsg("游戏结束！得分 " + score + " · 按空格或点击画面重新开始");
+    draw();
+  }
+
+  function turn(name) {
+    var m = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } }[name];
+    if (!m) return;
+    if (m.x === -dir.x && m.y === -dir.y) return; // 不能 180 度掉头
+    nextDir = m;
+    if (!started && !dead) start();
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function draw() {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, cv.width, cv.height);
+
+    ctx.fillStyle = "rgba(61,107,142,.10)";
+    for (var i = 1; i < N; i++) {
+      for (var j = 1; j < N; j++) {
+        ctx.fillRect(i * CELL - 1, j * CELL - 1, 2, 2);
+      }
+    }
+
+    // 食物
+    ctx.fillStyle = "#d1495b";
+    ctx.beginPath();
+    ctx.arc((food.x + 0.5) * CELL, (food.y + 0.5) * CELL, CELL * 0.38, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 蛇身：从头到尾颜色渐变
+    for (var k = snake.length - 1; k >= 0; k--) {
+      var s = snake[k];
+      var t = snake.length === 1 ? 0 : k / (snake.length - 1);
+      ctx.fillStyle = dead ? "#9aa0a6"
+        : "rgb(" + Math.round(46 + t * 30) + "," + Math.round(125 - t * 25) + "," + Math.round(98 + t * 14) + ")";
+      roundRect(s.x * CELL + 1.5, s.y * CELL + 1.5, CELL - 3, CELL - 3, 5);
+      ctx.fill();
+    }
+  }
+
+  document.addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase();
+    var map = {
+      arrowup: "up", w: "up",
+      arrowdown: "down", s: "down",
+      arrowleft: "left", a: "left",
+      arrowright: "right", d: "right"
+    };
+    if (map[k]) {
+      e.preventDefault();
+      if (!dead) turn(map[k]);
+    } else if (k === " ") {
+      e.preventDefault();
+      if (dead) { reset(); return; }
+      if (timer) { clearInterval(timer); timer = null; setMsg("已暂停 · 按空格继续"); }
+      else { start(); }
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("#pad button"), function (b) {
+    b.addEventListener("click", function () { if (!dead) turn(b.dataset.d); });
+  });
+
+  cv.addEventListener("click", function () { if (dead) reset(); });
+
+  reset();
+})();
+</script>
+</body>
+</html>
